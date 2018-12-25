@@ -48,9 +48,12 @@
 
 	async function readWords(data, wpm) {
 		var viewer = document.getElementById("wordviewer");
-		for (var item of data) {
-			viewer.innerHTML = item.word;
-			await sleep(wordsPerMinuteToMsPerWord(wpm, item));
+		var total_words = data.length;
+		for (var i = 0; i < data.length; i++) {
+			viewer.innerHTML = data[i].word;
+			var percent_done = (i+1) / total_words;
+			updateCompletionBar(percent_done);
+			await sleep(wordsPerMinuteToMsPerWord(wpm, data[i]));
 		};
 	}
 
@@ -69,6 +72,10 @@
 		base += item.puncuation_wait * 60;  // add an additional delay for punctuation characters
 
 		return base
+	}
+
+	function updateCompletionBar(percent) {
+		// todo add bar that represents how done the reading is
 	}
 
 	async function runWord(viewer, word, timeout) {
