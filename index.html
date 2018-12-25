@@ -8,13 +8,31 @@
 	<textarea id="words-input" rows="20"></textarea>
 	<br>
 	<button onclick="start()">Go!</button>
+
+	<div id="completion-progress">
+		<div id="completion-bar"></div>
+	</div>
+
 	<div class="wordviewer-container">
 		<h1 id="wordviewer"></h1>
 	</div>
 	<!-- todo make speed slider, save to cookies -->
 	<!-- todo add pause button (also via space) -->
 </body>
+
 <style type="text/css">
+	#completion-progress {
+		width: 100%;
+		background-color: #ddd;
+	}
+
+	#completion-bar {
+		margin: .4em 0;
+		width: 0.1%;
+		height: 18px;
+		background-color: #9EEBFC;
+	}
+
 	#words-input {
 		width: 90%;
 		margin: 0 5%;
@@ -75,7 +93,8 @@
 	}
 
 	function updateCompletionBar(percent) {
-		// todo add bar that represents how done the reading is
+		var elem = document.getElementById("completion-bar");
+		elem.style.width = percent * 100 + '%';
 	}
 
 	async function runWord(viewer, word, timeout) {
