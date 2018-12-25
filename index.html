@@ -58,8 +58,15 @@
 		// this seems confusing but it takes a WPM value and returns
 		// the duration of each word to achieve the given WPM
 		// 1 m = 60 s = 60,000 ms
-		var base = 60000 / wpm;
-		base += item.puncuation_wait * 80;  // add an additional delay for punctuation characters
+		var base_length = 5; // assumes an average word length of 5 characters
+		var min_length = 3;
+		var base_character = (60000) / (base_length * wpm) ;
+		if (item.length > base_length) {
+			var base = base_character * item.length;
+		} else {
+			var base = base_character * min_length;
+		}
+		base += item.puncuation_wait * 60;  // add an additional delay for punctuation characters
 
 		return base
 	}
