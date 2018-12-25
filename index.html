@@ -59,7 +59,7 @@
 		// the duration of each word to achieve the given WPM
 		// 1 m = 60 s = 60,000 ms
 		var base = 60000 / wpm;
-		base += item.puncuation_wait * 100;
+		base += item.puncuation_wait * 80;  // add an additional delay for punctuation characters
 
 		return base
 	}
