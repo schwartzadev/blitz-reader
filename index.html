@@ -97,10 +97,6 @@
 		elem.style.width = percent * 100 + '%';
 	}
 
-	async function runWord(viewer, word, timeout) {
-		await sleep(timeout);
-	}
-
 	function clean_words_array(words) {
 		words.forEach(function(word, index, object) {
 			if (word == ' ') {
