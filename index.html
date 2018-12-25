@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blitz Reader</title>
+</head>
+<body>
+	<textarea id="words-input" cols="200" rows="20">of Xiaonei—now called Renren, “Everybody”—eventually raised $740 million during its 2011 debut on the New York Stock Exchange</textarea>
+	<br>
+	<button onclick="prepareWords()">Go!</button>
+	<div class="wordviewer-container">
+		<h1 id="wordviewer"></h1>
+	</div>
+</body>
+<script type="text/javascript">
+
+	words = prepareWords(); // todo delete this in production
+	readWords(words, 200);
+
+	function prepareWords() {
+		var content = document.getElementById("words-input").value;
+		var words = content.split(/([\s|\n|\u2014|\u2013])/);
+		clean_words_array(words);
+		data = make_word_lengths(words);
+		return words
+	}
+
+	async function readWords(words, duration) {
+		var viewer = document.getElementById("wordviewer");
+		for (var word of words) {
+			console.log(word);
+			await sleep(duration);
+			viewer.innerHTML = word;
+		};
+	}
+
+	async function runWord(viewer, word, timeout) {
+		await sleep(timeout);
+	}
+
+	function clean_words_array(words) {
+		words.forEach(function(word, index, object) {
+			if (word == ' ') {
+				words.splice(index, 1);
+			}
+			if (word == '\u2014' || word == '\u2013') {  // add dash to previous word
+				words.splice(index - 1, 2, object[index - 1] + word);  // remove the dash and the word, replace the two with the combined string
+			}
+		});
+	}
+
+	function make_word_lengths(words) {
+		var results = []
+		words.forEach(function(word, index, object) {
+			var special = 0;
+			if ( word.includes('.') || word.includes('?') || word.includes('!') ) {
+				special += 3
+			} else if (word.includes(';')) {
+				special += 2
+			} else if ( word.includes(',') || word.includes('\u2014') || word.includes('\u2013') ) {
+				special += 2
+			}
+
+			info = {
+				'word': word,
+				'length': word.length,
+				'puncuation_wait': special
+			};
+			results += info;
+			// console.log(info);
+		});
+		return results;
+	}
+
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	function splitValue(value, index) {
+		return [value.substring(0, index+1), value.substring(index+1)];
+	}
+</script>
+</html>
