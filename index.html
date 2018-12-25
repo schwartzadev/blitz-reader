@@ -10,6 +10,8 @@
 	<div class="wordviewer-container">
 		<h1 id="wordviewer"></h1>
 	</div>
+	<!-- todo make speed slider, save to cookies -->
+	<!-- todo add pause button (also via space) -->
 </body>
 <script type="text/javascript">
 
@@ -24,11 +26,10 @@
 		return words
 	}
 
-	async function readWords(words, duration) {
+	async function readWords(words, wpm) {
 		var viewer = document.getElementById("wordviewer");
 		for (var word of words) {
-			console.log(word);
-			await sleep(duration);
+			await sleep(wordsPerMinuteToMsPerWord(wpm));
 			viewer.innerHTML = word;
 		};
 	}
@@ -71,6 +72,13 @@
 		return results;
 	}
 
+	function wordsPerMinuteToMsPerWord(wpm) {
+		// this seems confusing but it takes a WPM value and returns
+		// the duration of each word to achieve the given WPM
+		// 1 m = 60 s = 60,000 ms
+		return 60000 / wpm
+	}
+
 	function sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
@@ -78,5 +86,6 @@
 	function splitValue(value, index) {
 		return [value.substring(0, index+1), value.substring(index+1)];
 	}
+
 </script>
 </html>
