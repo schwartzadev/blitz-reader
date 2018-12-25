@@ -47,6 +47,10 @@
 		text-align: center;
 	}
 
+	.highlight {
+		color: #FA6136;
+	}
+
 </style>
 <script type="text/javascript">
 
@@ -68,7 +72,7 @@
 		var viewer = document.getElementById("wordviewer");
 		var total_words = data.length;
 		for (var i = 0; i < data.length; i++) {
-			viewer.innerHTML = data[i].word;
+			viewer.innerHTML = makeViewerContent(data[i].word);
 			var percent_done = (i+1) / total_words;
 			updateCompletionBar(percent_done);
 			await sleep(wordsPerMinuteToMsPerWord(wpm, data[i]));
@@ -95,6 +99,26 @@
 	function updateCompletionBar(percent) {
 		var elem = document.getElementById("completion-bar");
 		elem.style.width = percent * 100 + '%';
+	}
+
+	function makeViewerContent(word) {
+		wordInfo = getWordParts(word);
+		return '<span>' + wordInfo.start + '</span><span class="highlight">' + wordInfo.center + '</span><span>' + wordInfo.end + '</span>'; // todo sanitize this
+	}
+
+	function getWordParts(word) {
+		var size = word.length;
+		var isEven = size % 2 == 0;
+		if (isEven) {
+			var position = size / 2;
+		} else { // odd
+			var position = Math.ceil(size / 2);
+		}
+		return {
+			'start': word.slice(0, position - 1),
+			'center': word.charAt(position - 1),
+			'end': word.slice(position)
+		}
 	}
 
 	function clean_words_array(words) {
