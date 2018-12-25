@@ -5,9 +5,9 @@
 	<title>Blitz Reader</title>
 </head>
 <body>
-	<textarea id="words-input" rows="20">of Xiaonei—now called Renren, “Everybody”—eventually raised $740 million during its 2011 debut on the New York Stock Exchange</textarea>
+	<textarea id="words-input" rows="20"></textarea>
 	<br>
-	<button onclick="prepareWords()">Go!</button>
+	<button onclick="start()">Go!</button>
 	<div class="wordviewer-container">
 		<h1 id="wordviewer"></h1>
 	</div>
@@ -25,30 +25,43 @@
 	}
 
 	.wordviewer-container h1 {
-		font-size: 15vw;
+		font-size: 12vw;
 		text-align: center;
 	}
 
 </style>
 <script type="text/javascript">
 
-	words = prepareWords(); // todo update this in production
-	readWords(words, 500);
+
+	function start() {
+		data = prepareWords(); // todo update this in production
+		readWords(data, 500);
+	}
 
 	function prepareWords() {
 		var content = document.getElementById("words-input").value;
 		var words = content.split(/([\s|\n|\u2014|\u2013])/);
 		clean_words_array(words);
 		data = make_word_lengths(words);
-		return words
+		return data
 	}
 
-	async function readWords(words, wpm) {
+	async function readWords(data, wpm) {
 		var viewer = document.getElementById("wordviewer");
-		for (var word of words) {
-			await sleep(wordsPerMinuteToMsPerWord(wpm));
-			viewer.innerHTML = word;
+		for (var item of data) {
+			viewer.innerHTML = item.word;
+			await sleep(wordsPerMinuteToMsPerWord(wpm, item));
 		};
+	}
+
+	function wordsPerMinuteToMsPerWord(wpm, item) {
+		// this seems confusing but it takes a WPM value and returns
+		// the duration of each word to achieve the given WPM
+		// 1 m = 60 s = 60,000 ms
+		var base = 60000 / wpm;
+		base += item.puncuation_wait * 100;
+
+		return base
 	}
 
 	async function runWord(viewer, word, timeout) {
@@ -67,7 +80,7 @@
 	}
 
 	function make_word_lengths(words) {
-		var results = []
+		var results = [];
 		words.forEach(function(word, index, object) {
 			var special = 0;
 			if ( word.includes('.') || word.includes('?') || word.includes('!') ) {
@@ -78,22 +91,14 @@
 				special += 2
 			}
 
-			info = {
+			var info = {
 				'word': word,
 				'length': word.length,
 				'puncuation_wait': special
 			};
-			results += info;
-			// console.log(info);
+			results.push(info);
 		});
 		return results;
-	}
-
-	function wordsPerMinuteToMsPerWord(wpm) {
-		// this seems confusing but it takes a WPM value and returns
-		// the duration of each word to achieve the given WPM
-		// 1 m = 60 s = 60,000 ms
-		return 60000 / wpm
 	}
 
 	function sleep(ms) {
