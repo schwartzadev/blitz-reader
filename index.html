@@ -107,6 +107,7 @@
 	}
 
 	function getWordParts(word) {
+		// todo only factor in word characters (ignore quotes, punctuation, etc.)
 		var size = word.length;
 		var isEven = size % 2 == 0;
 		if (isEven) {
